@@ -65,52 +65,44 @@ extension GameScene: SKPhysicsContactDelegate {
      
       // 2
         //print(PhysicsCategory.target, PhysicsCategory.projectile, PhysicsCategory.blockPart)
-        print(firstBody.categoryBitMask, secondBody.categoryBitMask)
+        //print(firstBody.categoryBitMask, secondBody.categoryBitMask)
         if ((firstBody.categoryBitMask & PhysicsCategory.target != 0) && (secondBody.categoryBitMask & PhysicsCategory.projectile != 0)) {
-            print("HIT TARGET")
+            //print("HIT TARGET")
             if let target = firstBody.node as? SKSpriteNode,
                let projectile = secondBody.node as? SKSpriteNode {
                 
                 projectileDidCollideWithMonster(projectile: projectile, monster: target)
             }
         }else if ((firstBody.categoryBitMask & PhysicsCategory.switchPart != 0) && (secondBody.categoryBitMask & PhysicsCategory.projectile != 0)) {
-            print("SWITCH HIT")
+            //print("SWITCH HIT")
             if let Switch = firstBody.node as? SKSpriteNode,
                let projectile = secondBody.node as? SKSpriteNode {
                 
                 projectileDidCollideWithSwitch(part: projectile, projectile: Switch)
             }
         }else if ((firstBody.categoryBitMask & firstBody.categoryBitMask == 2) && (secondBody.categoryBitMask & secondBody.categoryBitMask == 4)) {
-            print("HIT BLOCK")
+            //print("HIT BLOCK")
             
             if let block = firstBody.node as? SKSpriteNode,
                let projectile = secondBody.node as? SKSpriteNode {
                 
-                projectileDidCollideWithBlock(part: projectile, projectile: block)
+                if block.alpha >= 0.5 && block.alpha <= 1.5 && projectile.alpha >= 0.5 && projectile.alpha <= 1.5 {
+                    projectileDidCollideWithBlock(part: projectile, projectile: block)
+                }
             }
         }
-        
-        //if ((firstBody.categoryBitMask & PhysicsCategory.switchPart != 0) &&
-        //    (secondBody.categoryBitMask & PhysicsCategory.projectile != 0)) {
-        //    if let Switch = firstBody.node as? SKSpriteNode,
-        //       let projectile = secondBody.node as? SKSpriteNode {
-        //        print("Hit switch")
-        //        projectileDidCollideWithSwitch(projectile: projectile, part: Switch)
-        //    }
-        //}
     }
 }
 
 
 class GameScene: SKScene {
-    //var label : SKLabelNode!
-    //var starfield: SKEmitterNode!
-    //var player: SKSpriteNode!
-    // 1
     
     var currentAmmo = 3
     var scorePoints = 0
-    var switchMode = "blue"
+    var switchMode = "red"
+    let bluSwitchOriginalPos = CGPoint(x: -100, y: -100)
+    let redSwitchOriginalPos = CGPoint(x: -100, y: 100)
+    
     
     let player = SKSpriteNode(imageNamed: "player")
     
@@ -199,8 +191,22 @@ class GameScene: SKScene {
         addChild(Switch)
     }
     
+    func changeBlocks() {
+        if switchMode == "blue" {
+            //redBlock.position = CGPoint(x: 200, y: 1000)
+            redBlock.alpha = 0.0
+            bluBlock.alpha = 1.0
+            //bluBlock.position = bluSwitchOriginalPos
+        }else if switchMode == "red" {
+            //redBlock.position = redSwitchOriginalPos
+            redBlock.alpha = 1.0
+            bluBlock.alpha = 0.0
+            //bluBlock.position = CGPoint(x: 200, y: 1000)
+        }
+        print(bluBlock.position, redBlock.position)
+    }
     func addBlocks() {
-        bluBlock.position = CGPoint(x: 150, y: 0)
+        bluBlock.position = bluSwitchOriginalPos
         bluBlock.zPosition = 6
         bluBlock.setScale(0.4)
         
@@ -209,9 +215,9 @@ class GameScene: SKScene {
         bluBlock.physicsBody?.categoryBitMask = PhysicsCategory.blockPart
         bluBlock.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
         bluBlock.physicsBody?.collisionBitMask = PhysicsCategory.none
-        //addChild(bluBlock)
+        addChild(bluBlock)
         
-        redBlock.position = CGPoint(x: -150, y: 0)
+        redBlock.position = redSwitchOriginalPos
         redBlock.zPosition = 6
         redBlock.setScale(0.4)
         
@@ -221,6 +227,7 @@ class GameScene: SKScene {
         redBlock.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
         redBlock.physicsBody?.collisionBitMask = PhysicsCategory.none
         addChild(redBlock)
+        changeBlocks()
     }
     
     
@@ -443,12 +450,17 @@ class GameScene: SKScene {
         if switchMode == "blue" {
             switchMode = "red"
             part.texture = redSwitchText
+            changeBlocks()
+            //redBlock.position = redSwitchOriginalPos
+            //bluBlock.position = CGPoint(x: 200, y: 1500)
         }else if switchMode == "red" {
             switchMode = "blue"
             part.texture = bluSwitchText
+            changeBlocks()
+            //redBlock.position = CGPoint(x: 200, y: 1500)
+            //bluBlock.position = bluSwitchOriginalPos
         }
-        
-        print("Switch hit", switchMode)
+        //print("Switch hit", switchMode)
     }
     
     func projectileDidCollideWithBlock(part: SKSpriteNode, projectile: SKSpriteNode) {

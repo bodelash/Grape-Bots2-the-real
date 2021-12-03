@@ -230,7 +230,7 @@ class GameScene: SKScene {
         changeBlocks()
     }
     
-    
+    let randomRotations = [-0.75,0.75,-1.5,1.5]
     func rotatePlayer() {
         //targetAmount = 1
         
@@ -294,6 +294,7 @@ class GameScene: SKScene {
             targetAmount += 1
             targetChecks[newTargPosSelect[1] as! Int] = true
             let target = SKSpriteNode(imageNamed: "Target")
+            target.zRotation = CGFloat(randomRotations.randomElement()!)
             target.physicsBody = SKPhysicsBody(rectangleOf: target.size)
             target.physicsBody?.isDynamic = true
             target.physicsBody?.categoryBitMask = PhysicsCategory.target
@@ -302,7 +303,7 @@ class GameScene: SKScene {
             
             target.position = newTargPos as! CGPoint
             target.zPosition = 0.3
-            target.setScale(0.5)
+            target.setScale(0.9)
           //monster.position = CGPoint(x: Int(TargetXPositions.randomElement()!), y: Int(TargetYPositions.randomElement()!))
             addChild(target)
         }else if targetAmount < 4 {
@@ -388,7 +389,8 @@ class GameScene: SKScene {
             let touchLocation = AimingDegree
             
             let projectile = SKSpriteNode(imageNamed: "grape")
-            projectile.setScale(0.3)
+            projectile.zRotation = CGFloat(randomRotations.randomElement()!)
+            projectile.setScale(0.4)
             projectile.position = player.position
             projectile.zPosition = 0.5
             projectile.physicsBody = SKPhysicsBody(circleOfRadius: projectile.size.width/2)
@@ -413,19 +415,19 @@ class GameScene: SKScene {
         }
     }
     func projectileDidCollideWithMonster(projectile: SKSpriteNode, monster: SKSpriteNode) {
-        if projectile.position.x <= 140.0 && projectile.position.x >= 100.0 && projectile.position.y == 0.0 {
+        if projectile.position.x <= 200.0 && projectile.position.x >= 60.0 && projectile.position.y == 0.0 {
             targetChecks[targetPositions[0][1] as! Int] = false
-        }else if projectile.position.x >= 120.0 && projectile.position.x <= 140.0 && projectile.position.y >= 120.0 && projectile.position.y <= 140.0 {
+        }else if projectile.position.x >= 60.0 && projectile.position.x <= 250.0 && projectile.position.y >= 60.0 && projectile.position.y <= 250.0 {
             targetChecks[targetPositions[1][1] as! Int] = false
-        }else if projectile.position.x >= 120.0 && projectile.position.x <= 140.0 && projectile.position.y <= -120.0 && projectile.position.y >= -140.0 {
+        }else if projectile.position.x >= 60.0 && projectile.position.x <= 250.0 && projectile.position.y <= -60.0 && projectile.position.y >= -200.0 {
             targetChecks[targetPositions[2][1] as! Int] = false
-        }else if projectile.position.x >= -140.0 && projectile.position.x <= -100.0 && projectile.position.y == 0.0 {
+        }else if projectile.position.x >= -200.0 && projectile.position.x <= -60.0 && projectile.position.y == 0.0 {
             targetChecks[targetPositions[3][1] as! Int] = false
-        }else if projectile.position.x <= -120.0 && projectile.position.x >= -140.0 && projectile.position.y >= 120.0 && projectile.position.y <= 140.0 {
+        }else if projectile.position.x <= -60.0 && projectile.position.x >= -200.0 && projectile.position.y >= 60.0 && projectile.position.y <= 200.0 {
             targetChecks[targetPositions[4][1] as! Int] = false
-        }else if projectile.position.x <= -120.0 && projectile.position.x >= -140.0 && projectile.position.y <= -120.0 && projectile.position.y >= -140.0 {
+        }else if projectile.position.x <= -600.0 && projectile.position.x >= -200.0 && projectile.position.y <= -100.0 && projectile.position.y >= -200.0 {
             targetChecks[targetPositions[5][1] as! Int] = false
-        }else if projectile.position.y <= 140.0 && projectile.position.y >= 100.0 && projectile.position.x == 0.0 {
+        }else if projectile.position.y <= 200.0 && projectile.position.y >= 60.0 && projectile.position.x == 0.0 {
             targetChecks[targetPositions[6][1] as! Int] = false
         }else if projectile.position.y >= -140.0 && projectile.position.y <= -100.0 && projectile.position.x == 0.0 {
             targetChecks[targetPositions[7][1] as! Int] = false
@@ -440,7 +442,11 @@ class GameScene: SKScene {
         scorePoints += 50
         scoreLabel.text = "Score: " + String(scorePoints)
         
-        currentAmmo += 1
+        let luckNumbers = [1,2,3,4,100]
+        
+        if luckNumbers.randomElement()! <= 50 {
+            currentAmmo += 1
+        }
         ammoLabel.text = String(currentAmmo)
         //print("Hit target")
     }

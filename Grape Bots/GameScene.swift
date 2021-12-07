@@ -104,7 +104,8 @@ class GameScene: SKScene {
     let redSwitchOriginalPos = CGPoint(x: -100, y: 100)
     
     
-    let player = SKSpriteNode(imageNamed: "player")
+    private var player = SKSpriteNode()//(imageNamed: "player")
+    private var playerShootFrames: [SKTexture] = []
     
     let ammoLabel = SKLabelNode(fontNamed: "Helvetica Neue Medium")
     let scoreLabel = SKLabelNode(fontNamed: "Helvetica Neue Medium")
@@ -113,9 +114,24 @@ class GameScene: SKScene {
     let NumberValue2 = SKLabelNode(fontNamed: "Helvetica Neue Medium")
       
     override func didMove(to view: SKView) {
-        backgroundColor = SKColor.orange
+        backgroundColor = SKColor.init(red: 180, green: 180, blue: 180, alpha: 1)
+        
+        let playerAtlas = SKTextureAtlas(named: "BotAnim")
+        var walkFrames: [SKTexture] = []
+
+        let numImages = playerAtlas.textureNames.count
+        for i in 1...numImages {
+            let botTextureName = "bot\(i)"
+            walkFrames.append(playerAtlas.textureNamed(botTextureName))
+        }
+        playerShootFrames = walkFrames
+        
+        let firstFrameTexture = playerShootFrames[0]
+        player = SKSpriteNode(texture: firstFrameTexture)
         player.position = CGPoint(x: 0, y: 0)
         player.zPosition = 3
+        player.setScale(1.7)
+        
         addChild(player)
         physicsWorld.gravity = .zero
         physicsWorld.contactDelegate = self
@@ -167,9 +183,17 @@ class GameScene: SKScene {
         run(SKAction.repeatForever(
                 SKAction.sequence([
                 SKAction.run(rotatePlayer),
-                SKAction.wait(forDuration: 0.8)
+                    SKAction.wait(forDuration: 0.8)
             ])
         ))
+    }
+    
+    func animateBear() {
+        player.run(SKAction.animate(with: playerShootFrames,
+                                    timePerFrame: 0.1,
+                                    resize: false,
+                                    restore: true))
+        player.texture = playerShootFrames[0]
     }
     
     let Switch = SKSpriteNode(imageNamed: "BluSwitch")
@@ -178,10 +202,10 @@ class GameScene: SKScene {
     let bluBlock = SKSpriteNode(imageNamed: "BluBlock")
     let redBlock = SKSpriteNode(imageNamed: "RedBlock")
     func addSwitch() {
-        Switch.position = CGPoint(x: 230, y: 0)
+        Switch.position = CGPoint(x: 250, y: 0)
         Switch.zPosition = 6
         Switch.texture = bluSwitchText
-        Switch.setScale(0.4)
+        Switch.setScale(0.3)
         
         Switch.physicsBody = SKPhysicsBody(rectangleOf: Switch.size)
         Switch.physicsBody?.isDynamic = true
@@ -230,16 +254,25 @@ class GameScene: SKScene {
         changeBlocks()
     }
     
+    var cooldown = false
     let randomRotations = [-0.75,0.75,-1.5,1.5]
     func rotatePlayer() {
         //targetAmount = 1
         
-        if scorePoints > -200 && scorePoints < 600 {
-            scorePoints -= targetAmount * 4
-        }else if scorePoints >= 600 {
-            scorePoints -= targetAmount * 5
+        if cooldown == true {
+            cooldown = false
+            if scorePoints > -100 && scorePoints < 700 {
+                scorePoints -= targetAmount * 5
+            }else if scorePoints >= 700 && scorePoints < 1300 {
+                scorePoints -= targetAmount * 8
+            }else if scorePoints >= 1300 {
+                scorePoints -= targetAmount * 10
+            }else {
+                scorePoints -= targetAmount * 3
+            }
+            
         }else {
-            scorePoints -= targetAmount * 2
+            cooldown = true
         }
         scoreLabel.text = "Score: " + String(scorePoints)
         //print("Turn1", player.zRotation)
@@ -383,10 +416,13 @@ class GameScene: SKScene {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if currentAmmo > 0 {
+            //run(SKAction.playSoundFileNamed("ShootSound.caf", waitForCompletion: false))
             currentAmmo = currentAmmo - 1
             ammoLabel.text = String(currentAmmo)
             
             let touchLocation = AimingDegree
+            animateBear()
+            
             
             let projectile = SKSpriteNode(imageNamed: "grape")
             projectile.zRotation = CGFloat(randomRotations.randomElement()!)
@@ -417,18 +453,25 @@ class GameScene: SKScene {
     func projectileDidCollideWithMonster(projectile: SKSpriteNode, monster: SKSpriteNode) {
         if projectile.position.x <= 200.0 && projectile.position.x >= 60.0 && projectile.position.y == 0.0 {
             targetChecks[targetPositions[0][1] as! Int] = false
+            
         }else if projectile.position.x >= 60.0 && projectile.position.x <= 250.0 && projectile.position.y >= 60.0 && projectile.position.y <= 250.0 {
             targetChecks[targetPositions[1][1] as! Int] = false
+            
         }else if projectile.position.x >= 60.0 && projectile.position.x <= 250.0 && projectile.position.y <= -60.0 && projectile.position.y >= -200.0 {
             targetChecks[targetPositions[2][1] as! Int] = false
+            
         }else if projectile.position.x >= -200.0 && projectile.position.x <= -60.0 && projectile.position.y == 0.0 {
             targetChecks[targetPositions[3][1] as! Int] = false
+            
         }else if projectile.position.x <= -60.0 && projectile.position.x >= -200.0 && projectile.position.y >= 60.0 && projectile.position.y <= 200.0 {
             targetChecks[targetPositions[4][1] as! Int] = false
-        }else if projectile.position.x <= -600.0 && projectile.position.x >= -200.0 && projectile.position.y <= -100.0 && projectile.position.y >= -200.0 {
+            
+        }else if projectile.position.x <= -60.0 && projectile.position.x >= -200.0 && projectile.position.y <= -100.0 && projectile.position.y >= -200.0 {
             targetChecks[targetPositions[5][1] as! Int] = false
+            
         }else if projectile.position.y <= 200.0 && projectile.position.y >= 60.0 && projectile.position.x == 0.0 {
             targetChecks[targetPositions[6][1] as! Int] = false
+            
         }else if projectile.position.y >= -140.0 && projectile.position.y <= -100.0 && projectile.position.x == 0.0 {
             targetChecks[targetPositions[7][1] as! Int] = false
         }

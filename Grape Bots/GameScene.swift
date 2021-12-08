@@ -99,7 +99,7 @@ class GameScene: SKScene {
     
     var currentAmmo = 3
     var scorePoints = 0
-    var switchMode = "red"
+    var switchMode = "blue"
     let bluSwitchOriginalPos = CGPoint(x: -100, y: -100)
     let redSwitchOriginalPos = CGPoint(x: -100, y: 100)
     
@@ -114,7 +114,7 @@ class GameScene: SKScene {
     let NumberValue2 = SKLabelNode(fontNamed: "Helvetica Neue Medium")
       
     override func didMove(to view: SKView) {
-        backgroundColor = SKColor.init(red: 180, green: 180, blue: 180, alpha: 1)
+        backgroundColor = SKColor.init(red: 1, green: 1, blue: 0, alpha: 1)
         
         let playerAtlas = SKTextureAtlas(named: "BotAnim")
         var walkFrames: [SKTexture] = []
@@ -189,10 +189,12 @@ class GameScene: SKScene {
     }
     
     func animateBear() {
+        player.texture = playerShootFrames[0]
         player.run(SKAction.animate(with: playerShootFrames,
                                     timePerFrame: 0.1,
                                     resize: false,
                                     restore: true))
+        SKAction.wait(forDuration: 0.1)
         player.texture = playerShootFrames[0]
     }
     
@@ -220,11 +222,13 @@ class GameScene: SKScene {
             //redBlock.position = CGPoint(x: 200, y: 1000)
             redBlock.alpha = 0.0
             bluBlock.alpha = 1.0
+            backgroundColor = SKColor.init(red: 0.5, green: 0.3, blue: 0.7, alpha: 1)
             //bluBlock.position = bluSwitchOriginalPos
         }else if switchMode == "red" {
             //redBlock.position = redSwitchOriginalPos
             redBlock.alpha = 1.0
             bluBlock.alpha = 0.0
+            backgroundColor = SKColor.init(red: 0.8, green: 0.5, blue: 0, alpha: 1)
             //bluBlock.position = CGPoint(x: 200, y: 1000)
         }
         print(bluBlock.position, redBlock.position)
@@ -251,28 +255,31 @@ class GameScene: SKScene {
         redBlock.physicsBody?.contactTestBitMask = PhysicsCategory.projectile
         redBlock.physicsBody?.collisionBitMask = PhysicsCategory.none
         addChild(redBlock)
+        
         changeBlocks()
     }
     
-    var cooldown = false
+    var cooldown = 0
     let randomRotations = [-0.75,0.75,-1.5,1.5]
     func rotatePlayer() {
         //targetAmount = 1
         
-        if cooldown == true {
-            cooldown = false
-            if scorePoints > -100 && scorePoints < 700 {
-                scorePoints -= targetAmount * 5
+        if cooldown == 1 {
+            cooldown = 0
+            if scorePoints > -100 && scorePoints < 600 {
+                scorePoints -= targetAmount * 6
             }else if scorePoints >= 700 && scorePoints < 1300 {
                 scorePoints -= targetAmount * 8
             }else if scorePoints >= 1300 {
                 scorePoints -= targetAmount * 10
+            }else if scorePoints >= 2000 {
+                scorePoints -= targetAmount * 13
             }else {
                 scorePoints -= targetAmount * 3
             }
             
         }else {
-            cooldown = true
+            cooldown = 1
         }
         scoreLabel.text = "Score: " + String(scorePoints)
         //print("Turn1", player.zRotation)
@@ -364,17 +371,21 @@ class GameScene: SKScene {
                 let number2 = Int(NumberValue2.text!)
                 if number1! < number2! {
                     //print("Correct!")
-                    scorePoints += 10
+                    scorePoints += 25
                     if currentAmmo <= 6 {
                         currentAmmo += 1
                     }
                 }else {
-                    if scorePoints > -200 {
+                    if scorePoints > -250 {
                         scorePoints -= 80
                     }
                     if currentAmmo > 0 {
                         currentAmmo -= 1
                     }
+                    let originalBackground = backgroundColor
+                    backgroundColor = SKColor.init(red: 1, green: 0.1, blue: 0.1, alpha: 1)
+                    SKAction.wait(forDuration: 0.1)
+                    backgroundColor = originalBackground
                 }
                 ammoLabel.text = String(currentAmmo)
                 scoreLabel.text = "Score: " + String(scorePoints)
@@ -385,17 +396,21 @@ class GameScene: SKScene {
                 let number2 = Int(NumberValue2.text!)
                 if number1! > number2! {
                     //print("Correct!")
-                    scorePoints += 10
+                    scorePoints += 25
                     if currentAmmo <= 6 {
                         currentAmmo += 1
                     }
                 }else {
-                    if scorePoints > -200 {
+                    if scorePoints > -250 {
                         scorePoints -= 80
                     }
                     if currentAmmo > 0 {
                         currentAmmo -= 1
                     }
+                    let originalBackground = backgroundColor
+                    backgroundColor = SKColor.init(red: 1, green: 0.1, blue: 0.1, alpha: 1)
+                    SKAction.wait(forDuration: 0.1)
+                    backgroundColor = originalBackground
                 }
                 ammoLabel.text = String(currentAmmo)
                 scoreLabel.text = "Score: " + String(scorePoints)
@@ -421,7 +436,6 @@ class GameScene: SKScene {
             ammoLabel.text = String(currentAmmo)
             
             let touchLocation = AimingDegree
-            animateBear()
             
             
             let projectile = SKSpriteNode(imageNamed: "grape")
@@ -448,6 +462,7 @@ class GameScene: SKScene {
             let actionMove = SKAction.move(to: realDest, duration: 2.0)
             let actionMoveDone = SKAction.removeFromParent()
             projectile.run(SKAction.sequence([actionMove, actionMoveDone]))
+            animateBear()
         }
     }
     func projectileDidCollideWithMonster(projectile: SKSpriteNode, monster: SKSpriteNode) {
@@ -485,7 +500,7 @@ class GameScene: SKScene {
         scorePoints += 50
         scoreLabel.text = "Score: " + String(scorePoints)
         
-        let luckNumbers = [1,2,3,4,100]
+        let luckNumbers = [1,2,3,100]
         
         if luckNumbers.randomElement()! <= 50 {
             currentAmmo += 1

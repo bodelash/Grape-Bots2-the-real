@@ -222,13 +222,13 @@ class GameScene: SKScene {
             //redBlock.position = CGPoint(x: 200, y: 1000)
             redBlock.alpha = 0.0
             bluBlock.alpha = 1.0
-            backgroundColor = SKColor.init(red: 0.5, green: 0.3, blue: 0.7, alpha: 1)
+            backgroundColor = SKColor.init(red: 0.6, green: 0.5, blue: 0.8, alpha: 1)
             //bluBlock.position = bluSwitchOriginalPos
         }else if switchMode == "red" {
             //redBlock.position = redSwitchOriginalPos
             redBlock.alpha = 1.0
             bluBlock.alpha = 0.0
-            backgroundColor = SKColor.init(red: 0.8, green: 0.5, blue: 0, alpha: 1)
+            backgroundColor = SKColor.init(red: 0.9, green: 0.7, blue: 0.3, alpha: 1)
             //bluBlock.position = CGPoint(x: 200, y: 1000)
         }
         print(bluBlock.position, redBlock.position)
@@ -275,7 +275,7 @@ class GameScene: SKScene {
             }else if scorePoints >= 2000 {
                 scorePoints -= targetAmount * 13
             }else {
-                scorePoints -= targetAmount * 3
+                scorePoints -= targetAmount * 5
             }
             
         }else {
@@ -357,9 +357,15 @@ class GameScene: SKScene {
                              -13,-14,-15,-16,-17,-18,-19,-20,-30,-40,
                              -50,-60,-70,-80,-90,-100,-55,-26,-35,-46,
                              -64,-72,-88,-91]
+    let coinFlipperMathText = [1,2,3]
     func changeMathText() {
-        NumberValue1.text = String(scorePoints)
-        NumberValue2.text = String(scorePoints + randomMathNumbers.randomElement()!)
+        if coinFlipperMathText.randomElement()! == 1 {
+            NumberValue1.text = String(scorePoints * -1)
+            NumberValue2.text = String((scorePoints + randomMathNumbers.randomElement()!) * -1)
+        }else {
+            NumberValue1.text = String(scorePoints)
+            NumberValue2.text = String(scorePoints + randomMathNumbers.randomElement()!)
+        }
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
          for touch in touches {
@@ -500,13 +506,25 @@ class GameScene: SKScene {
         scorePoints += 50
         scoreLabel.text = "Score: " + String(scorePoints)
         
+        let luckNumbersNew = [1,2,100]
         let luckNumbers = [1,2,3,100]
         
-        if luckNumbers.randomElement()! <= 50 {
-            currentAmmo += 1
+        if scorePoints <= 500 {
+            if luckNumbersNew.randomElement()! <= 50 {
+                currentAmmo += 1
+            }
+        }else {
+            if luckNumbers.randomElement()! <= 50 {
+                currentAmmo += 1
+            }
         }
         ammoLabel.text = String(currentAmmo)
         //print("Hit target")
+        if scorePoints >= 3000 {
+            let reveal = SKTransition.flipHorizontal(withDuration: 1.5)
+            let gameOverScene = GameOverScene(size: self.size, won: true)
+            view?.presentScene(gameOverScene, transition: reveal)
+        }
     }
 
     func projectileDidCollideWithSwitch(part: SKSpriteNode, projectile: SKSpriteNode) {

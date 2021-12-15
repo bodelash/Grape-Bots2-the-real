@@ -1,31 +1,31 @@
 {
   "images" : [
     {
-      "filename" : "GapeIcon-5.png",
+      "filename" : "40XGrapeIcon.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "20x20"
     },
     {
-      "filename" : "GapeIcon-6.png",
+      "filename" : "60XGrapeIcon.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "20x20"
     },
     {
-      "filename" : "GapeIcon-7.png",
+      "filename" : "58XGrapeIcon-1.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "29x29"
     },
     {
-      "filename" : "GapeIcon-8.png",
+      "filename" : "87XGrapeIcon.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "29x29"
     },
     {
-      "filename" : "GapeIcon-2.png",
+      "filename" : "80XGrapeIcon.png",
       "idiom" : "iphone",
       "scale" : "2x",
       "size" : "40x40"
@@ -43,55 +43,54 @@
       "size" : "60x60"
     },
     {
-      "filename" : "GapeIcon-1.png",
       "idiom" : "iphone",
       "scale" : "3x",
       "size" : "60x60"
     },
     {
-      "filename" : "GapeIcon-9.png",
+      "filename" : "20XGrapeIcon.png",
       "idiom" : "ipad",
       "scale" : "1x",
       "size" : "20x20"
     },
     {
-      "filename" : "GapeIcon-10.png",
+      "filename" : "40XGrapeIcon-1.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "20x20"
     },
     {
-      "filename" : "GapeIcon-11.png",
+      "filename" : "29XGrapeIcon.png",
       "idiom" : "ipad",
       "scale" : "1x",
       "size" : "29x29"
     },
     {
-      "filename" : "GapeIcon-12.png",
+      "filename" : "58XGrapeIcon.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "29x29"
     },
     {
-      "filename" : "GapeIcon-13.png",
+      "filename" : "40XGrapeIcon-2.png",
       "idiom" : "ipad",
       "scale" : "1x",
       "size" : "40x40"
     },
     {
-      "filename" : "GapeIcon-14.png",
+      "filename" : "80XGrapeIcon-1.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "40x40"
     },
     {
-      "filename" : "GapeIcon-4.png",
+      "filename" : "76XGrapeIcon.png",
       "idiom" : "ipad",
       "scale" : "1x",
       "size" : "76x76"
     },
     {
-      "filename" : "GapeIcon-15.png",
+      "filename" : "152XGrapeIcon.png",
       "idiom" : "ipad",
       "scale" : "2x",
       "size" : "76x76"
